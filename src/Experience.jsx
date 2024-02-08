@@ -5,7 +5,7 @@ export function Experience() {
     return (
         <>
             <Environment preset="sunset" />
-            <ambientLight intensity={0.5} />
+            <ambientLight intensity={0.3} />
             <AnimatedWoman />
         </>
     )
