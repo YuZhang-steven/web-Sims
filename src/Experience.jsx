@@ -7,6 +7,7 @@ export function Experience() {
             <Environment preset="sunset" />
             <ambientLight intensity={0.3} />
             <AnimatedWoman />
+            <AnimatedWoman position-x={1} hairColor="red" topColor="cyan" />
         </>
     )
 }
