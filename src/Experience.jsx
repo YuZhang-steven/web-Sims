@@ -11,7 +11,7 @@ export function Experience() {
                 <Model />
             </AnimatedWomanIns>
 
-            {/* {/* <AnimatedWoman /> */}
+            <AnimatedWoman />
             {/* <AnimatedWoman position-x={1} hairColor="red" topColor="cyan" /> */}
         </>
     )

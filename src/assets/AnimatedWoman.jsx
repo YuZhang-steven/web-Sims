@@ -20,6 +20,8 @@ export function AnimatedWoman({
   const { actions } = useAnimations(animations, group)
   const [animation, setAnimation] = useState("CharacterArmature|Idle")
 
+  console.log(animation);
+
   useEffect(() => {
     actions[animation].reset().fadeIn(0.5).play();
     return () => actions[animation].fadeOut(0.5);
