@@ -15,6 +15,8 @@ export function AnimatedWoman({
   const group = useRef()
   const { nodes, materials, animations } = useGLTF('/models/AnimatedWoman.glb')
 
+
+
   const { actions } = useAnimations(animations, group)
   const [animation, setAnimation] = useState("CharacterArmature|Idle")
 

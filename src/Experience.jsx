@@ -10,8 +10,9 @@ export function Experience() {
             <AnimatedWomanIns >
                 <Model />
             </AnimatedWomanIns>
-            {/* <AnimatedWoman />
-            <AnimatedWoman position-x={1} hairColor="red" topColor="cyan" /> */}
+
+            {/* {/* <AnimatedWoman /> */}
+            {/* <AnimatedWoman position-x={1} hairColor="red" topColor="cyan" /> */}
         </>
     )
 }
