@@ -1,4 +1,5 @@
 import { useAtom, atom } from "jotai"
+import * as THREE from "three"
 
 
 import { ContactShadows, Environment, useCursor } from "@react-three/drei";
@@ -33,7 +34,11 @@ export function Experience() {
                 characters.map((character) => (
                     <AnimatedWoman
                         key={character.id}
-                        position={character.position}
+                        position={new THREE.Vector3(
+                            character.position[0],
+                            character.position[1],
+                            character.position[1]
+                        )}
                         hairColor={character.hairColor}
                         topColor={character.topColor}
                         bottomColor={character.bottomColor}
