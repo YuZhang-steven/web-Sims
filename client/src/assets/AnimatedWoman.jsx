@@ -30,7 +30,7 @@ export function AnimatedWoman({
   // console.log(group);
   useEffect(() => {
     actions[animation].reset().fadeIn(0.5).play();
-    return () => actions[animation].fadeOut(0.5);
+    return () => actions[animation]?.fadeOut(0.5);
   }, [animation])
 
   return (
