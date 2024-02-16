@@ -46,7 +46,7 @@ export function Experience() {
                         position={new THREE.Vector3(
                             character.position[0],
                             character.position[1],
-                            character.position[1]
+                            character.position[2]
                         )}
                         hairColor={character.hairColor}
                         topColor={character.topColor}
