@@ -1,4 +1,4 @@
-import { useAtom, atom } from "jotai"
+import { useAtom } from "jotai"
 import * as THREE from "three"
 
 
@@ -9,20 +9,28 @@ import { useState } from "react";
 
 
 export function Experience() {
+    //get the character list from the socket message
     const [characters] = useAtom(charactersAtom)
+
+    // set the effect that when cursor on specific situation, it become the hand pointer symbol
     const [onFoor, setOnFloor] = useState(false)
     useCursor(onFoor)
 
     return (
         <>
+            {/* Environment setting */}
             <Environment preset="sunset" />
             <ambientLight intensity={0.3} />
             <ContactShadows blur={2.5} />
 
+            {/*  Floor */}
             <mesh
                 rotation-x={-Math.PI / 2}
                 position-y={-0.001}
+                //when clicking, send the intersection point information to the server to update the characters.
                 onClick={(e) => socket.emit("move", [e.point.x, 0, e.point.z])}
+
+                //mouse hover, the mouse symbol change
                 onPointerEnter={() => setOnFloor(true)}
                 onPointerLeave={() => setOnFloor(false)}
             >
@@ -30,6 +38,7 @@ export function Experience() {
                 <meshStandardMaterial color={"#f0f0f0"} />
             </mesh>
 
+            {/* when mounting, create each characters based on the charactee list */}
             {
                 characters.map((character) => (
                     <AnimatedWoman
@@ -48,8 +57,9 @@ export function Experience() {
 
 
 
-            <AnimatedWoman />
-            <AnimatedWoman position-x={1} hairColor="red" topColor="cyan" />
+            {/* test characters */}
+            {/* <AnimatedWoman />
+            <AnimatedWoman position-x={1} hairColor="red" topColor="cyan" /> */}
         </>
     )
 }
