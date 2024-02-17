@@ -15,7 +15,7 @@ export const charactersAtom = atom([])
 export const SocketManager = () => {
     //create a global state and send previus store in it
     //underscore means, the characters should be a private variables
-    const [_characters, setCharacters] = useAtom(charactersAtom)
+    const [characters, setCharacters] = useAtom(charactersAtom)
 
     /** UseEffect without dependency, only run once on initial mount.
      * it set up the listener to different events and turn off those listeners when component unmount
