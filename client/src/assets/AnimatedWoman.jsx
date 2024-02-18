@@ -7,6 +7,8 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import { useFrame, useGraph } from '@react-three/fiber'
 import { SkeletonUtils } from "three-stdlib"
+import { useAtom } from 'jotai'
+import { userAtom } from '../components/SocketManager'
 
 /**
  * basic varible
@@ -27,6 +29,7 @@ export function AnimatedWoman({
   hairColor = "green",
   topColor = "pink",
   bottomColor = "brown",
+  id,
   ...props
 }) {
 
@@ -61,10 +64,13 @@ export function AnimatedWoman({
     return () => actions[animation]?.fadeOut(0.32);
   }, [animation])
 
+
+  const [user] = useAtom(userAtom)
+
   /**
    * state lisnener during each frame
    */
-  useFrame(() => {
+  useFrame((state) => {
 
     /**
      * Cheack if the current position is different with character list position.
@@ -85,6 +91,17 @@ export function AnimatedWoman({
     else {
       setAnimation("CharacterArmature|Idle")
     }
+
+    /**
+     * 
+     */
+    if (id === user) {
+      state.camera.position.x = group.current.position.x + 8
+      state.camera.position.y = group.current.position.y + 8
+      state.camera.position.z = group.current.position.z + 8
+      state.camera.lookAt(group.current.position)
+    }
+
   })
 
   return (

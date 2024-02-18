@@ -8,6 +8,10 @@ export const socket = io("http://localhost:3001")
 
 //create a global state store: Characters, which it is an array to sync the character list with server
 export const charactersAtom = atom([])
+export const mapAtom = atom(null)
+export const userAtom = atom(null)
+
+
 
 /**
  * Major socketManager component
@@ -16,6 +20,8 @@ export const SocketManager = () => {
     //create a global state and send previus store in it
     //underscore means, the characters should be a private variables
     const [characters, setCharacters] = useAtom(charactersAtom)
+    const [map, setMap] = useAtom(mapAtom)
+    const [user, setUser] = useAtom(userAtom)
 
     /** UseEffect without dependency, only run once on initial mount.
      * it set up the listener to different events and turn off those listeners when component unmount
@@ -32,8 +38,13 @@ export const SocketManager = () => {
         function onDisconnect() {
             console.log("disconnected")
         }
-        function onHello() {
-            console.log("hello")
+        function onHello(value) {
+            // console.log(value);
+            setMap(value.map)
+            setUser(value.id)
+            setCharacters(value.characters)
+
+
         }
 
         //This function is the only function with args,

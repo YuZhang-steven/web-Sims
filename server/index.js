@@ -20,13 +20,70 @@ io.listen(3001);
 const characters = []
 
 /**
+ * item dictionary
+ */
+const items = {
+    table: {
+        name: 'tableRoundL',
+        size: [6, 2],
+    },
+    chair: {
+        name: "chair1",
+        size: [1, 1]
+    },
+    couch: {
+        name: "couchsmall1",
+        size: [3, 3]
+    },
+    sofa: {
+        name: "couchLarge1",
+        size: [7, 3]
+    },
+}
+
+/** map all the item and floor*/
+
+const map = {
+    size: [10, 10],
+    gridDivision: 2,
+    items: [
+        {
+            ...items.chair,
+            gridPosition: [12, 16],
+            rotation: 3
+        },
+        {
+            ...items.chair,
+            gridPosition: [8, 16],
+            rotation: 1
+        },
+        {
+            ...items.table,
+            gridPosition: [8, 14],
+            rotation: 1
+        },
+        {
+            ...items.couch,
+            gridPosition: [9, 6],
+            rotation: 1
+        },
+        {
+
+            ...items.sofa,
+            gridPosition: [12, 2],
+            rotation: 0
+        },
+    ]
+}
+
+/**
  * 
  * Helper function
  */
 
 //generate random 2D position
 const generateRandomPosition = () => {
-    return [Math.random() * 3, 0, Math.random() * 3]
+    return [Math.random() * map.size[0], 0, Math.random() * map.size[0]]
 }
 
 //generate random hex color
@@ -53,7 +110,13 @@ io.on("connection", (socket) => {
 
     //everytime a new socket connected, send this event massage to the one new connected
     //send back message to sender only
-    socket.emit("hello")//the first part is the string for eventName
+    socket.emit("hello", //the first part is the string for eventName
+        {
+            map,
+            characters,
+            id: socket.id,
+            items,
+        })
 
     //server send the messages to all connacted clients: include the new characters array
     io.emit("characters", characters);

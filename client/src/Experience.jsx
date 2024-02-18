@@ -4,7 +4,7 @@ import * as THREE from "three"
 
 import { ContactShadows, Environment, useCursor } from "@react-three/drei";
 import { AnimatedWoman } from "./assets/AnimatedWoman";
-import { charactersAtom, socket } from "./components/SocketManager";
+import { charactersAtom, mapAtom, socket } from "./components/SocketManager";
 import { useState } from "react";
 import { Item } from "./components/item";
 
@@ -12,6 +12,9 @@ import { Item } from "./components/item";
 export function Experience() {
     //get the character list from the socket message
     const [characters] = useAtom(charactersAtom)
+    const [map] = useAtom(mapAtom)
+    // console.log(map);
+
 
     // set the effect that when cursor on specific situation, it become the hand pointer symbol
     const [onFoor, setOnFloor] = useState(false)
@@ -34,21 +37,26 @@ export function Experience() {
                 //mouse hover, the mouse symbol change
                 onPointerEnter={() => setOnFloor(true)}
                 onPointerLeave={() => setOnFloor(false)}
+                position-x={map.size[0] / 2}
+                position-z={map.size[1] / 2 - 0.001}
             >
-                <planeGeometry args={[10, 10]} />
+                <planeGeometry args={map.size} />
                 <meshStandardMaterial color={"#f0f0f0"} />
             </mesh>
 
-            <Item name={"chair1"} />
-            <Item name={"couchLarge1"} />
-            <Item name={"couchsmall1"} />
-            <Item name={"tableRoundL"} />
+            {
+                map.items.map((item, idx) => (
+                    <Item key={`${item.name}-${idx}`} item={item} />
+                ))
+            }
+
 
             {/* when mounting, create each characters based on the charactee list */}
             {
                 characters.map((character) => (
                     <AnimatedWoman
                         key={character.id}
+                        id={character.id}
                         position={new THREE.Vector3(
                             character.position[0],
                             character.position[1],
