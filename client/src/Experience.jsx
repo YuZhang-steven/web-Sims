@@ -6,6 +6,7 @@ import { ContactShadows, Environment, useCursor } from "@react-three/drei";
 import { AnimatedWoman } from "./assets/AnimatedWoman";
 import { charactersAtom, socket } from "./components/SocketManager";
 import { useState } from "react";
+import { Item } from "./components/item";
 
 
 export function Experience() {
@@ -37,6 +38,11 @@ export function Experience() {
                 <planeGeometry args={[10, 10]} />
                 <meshStandardMaterial color={"#f0f0f0"} />
             </mesh>
+
+            <Item name={"chair1"} />
+            <Item name={"couchLarge1"} />
+            <Item name={"couchsmall1"} />
+            <Item name={"tableRoundL"} />
 
             {/* when mounting, create each characters based on the charactee list */}
             {
