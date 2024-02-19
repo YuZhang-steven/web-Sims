@@ -5,7 +5,7 @@ import * as THREE from "three"
 import { ContactShadows, Environment, useCursor } from "@react-three/drei";
 import { AnimatedWoman } from "./assets/AnimatedWoman";
 import { charactersAtom, mapAtom, socket } from "./components/SocketManager";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Item } from "./components/item";
 
 
@@ -14,6 +14,10 @@ export function Experience() {
     const [characters] = useAtom(charactersAtom)
     const [map] = useAtom(mapAtom)
     // console.log(map);
+
+    const [dataReady, setDataReady] = useState(false)
+
+
 
 
     // set the effect that when cursor on specific situation, it become the hand pointer symbol
@@ -38,7 +42,7 @@ export function Experience() {
                 onPointerEnter={() => setOnFloor(true)}
                 onPointerLeave={() => setOnFloor(false)}
                 position-x={map.size[0] / 2}
-                position-z={map.size[1] / 2 - 0.001}
+                position-z={map.size[1] / 2}
             >
                 <planeGeometry args={map.size} />
                 <meshStandardMaterial color={"#f0f0f0"} />
