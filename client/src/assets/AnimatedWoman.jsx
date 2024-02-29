@@ -105,7 +105,13 @@ export function AnimatedWoman({
   })
 
   return (
-    <group ref={group} {...props} position={position} dispose={null}>
+    <group
+      ref={group}
+      {...props}
+      position={position}
+      dispose={null}
+      name={`character-${id}`}
+    >
       <group name="Root_Scene">
         <group name="RootNode">
           <group name="CharacterArmature" rotation={[-Math.PI / 2, 0, 0]} scale={100}>

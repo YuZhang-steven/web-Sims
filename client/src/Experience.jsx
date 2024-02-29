@@ -7,15 +7,28 @@ import { AnimatedWoman } from "./assets/AnimatedWoman";
 import { charactersAtom, mapAtom, socket } from "./components/SocketManager";
 import { useEffect, useState } from "react";
 import { Item } from "./components/item";
+import { useThree } from "@react-three/fiber";
 
 
 export function Experience() {
     //get the character list from the socket message
     const [characters] = useAtom(charactersAtom)
     const [map] = useAtom(mapAtom)
-    // console.log(map);
+    console.log(map.gridDivision);
+
 
     const [dataReady, setDataReady] = useState(false)
+
+    const scenne = useThree((state) => state.scene)
+    const [user] = useAtom(userAtom)
+
+    const onCharacterMove = (e) => {
+        const character = scenne.getObjectByName(`character-${user}`)
+        if (!character) { return }
+        // socket.emit("move", {
+
+
+    }
 
 
 
@@ -36,7 +49,7 @@ export function Experience() {
                 rotation-x={-Math.PI / 2}
                 position-y={-0.001}
                 //when clicking, send the intersection point information to the server to update the characters.
-                onClick={(e) => socket.emit("move", [e.point.x, 0, e.point.z])}
+                onClick={onCharacterMove}
 
                 //mouse hover, the mouse symbol change
                 onPointerEnter={() => setOnFloor(true)}
@@ -62,9 +75,9 @@ export function Experience() {
                         key={character.id}
                         id={character.id}
                         position={new THREE.Vector3(
-                            character.position[0],
-                            character.position[1],
-                            character.position[2]
+                            character.position[0] / map.gridDivision + 1 / map.gridDivision / 2,
+                            0,
+                            character.position[1] / map.gridDivision + 1 / map.gridDivision / 2
                         )}
                         hairColor={character.hairColor}
                         topColor={character.topColor}

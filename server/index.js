@@ -477,9 +477,18 @@ console.log(findPath([3, 3], [4, 7]));
  * Helper function
  */
 
-//generate random 2D position
+//generate random 2D position:
+//
 const generateRandomPosition = () => {
-    return [Math.random() * map.size[0], 0, Math.random() * map.size[0]]
+    for (let i = 0; i < 100; i++) {
+        const x = Math.floor(Math.random() * map.size[0] * map.gridDivision)
+        const y = Math.floor(Math.random() * map.size[1] * map.gridDivision)
+        if (grid.isWalkableAt(x, y)) {
+            return [x, y];
+        }
+    }
+
+
 }
 
 //generate random hex color
@@ -522,9 +531,16 @@ io.on("connection", (socket) => {
     //listen to event "move" and get the arg, move location.
     //look the whole array and find the id matched character, then change its'position
     //finally send the new character list back to every clients
-    socket.on("move", (position) => {
+    socket.on("move", (from, to) => {
         const character = characters.find((character) => character.id === socket.id)
-        character.position = position
+
+        const path = findPath(from, to)
+        if (!path) {
+            return;
+        }
+
+        character.position = from;
+        character.path = path
         io.emit("characters", characters)
 
     })
