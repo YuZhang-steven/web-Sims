@@ -470,7 +470,7 @@ const updateGrid = () => {
 
 updateGrid()
 
-console.log(findPath([3, 3], [4, 7]));
+
 
 /**
  * 
@@ -541,7 +541,8 @@ io.on("connection", (socket) => {
 
         character.position = from;
         character.path = path
-        io.emit("characters", characters)
+        // console.log(path);
+        io.emit("playerMove", characters)
 
     })
 

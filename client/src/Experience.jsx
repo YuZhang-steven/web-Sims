@@ -4,17 +4,20 @@ import * as THREE from "three"
 
 import { ContactShadows, Environment, useCursor } from "@react-three/drei";
 import { AnimatedWoman } from "./assets/AnimatedWoman";
-import { charactersAtom, mapAtom, socket } from "./components/SocketManager";
+import { charactersAtom, mapAtom, socket, userAtom } from "./components/SocketManager";
 import { useEffect, useState } from "react";
 import { Item } from "./components/item";
 import { useThree } from "@react-three/fiber";
+import { useGrid } from "./hook/useGrid";
 
 
 export function Experience() {
     //get the character list from the socket message
     const [characters] = useAtom(charactersAtom)
     const [map] = useAtom(mapAtom)
-    console.log(map.gridDivision);
+
+
+    const { vector3ToGrid, gridToVector3 } = useGrid()
 
 
     const [dataReady, setDataReady] = useState(false)
@@ -25,8 +28,11 @@ export function Experience() {
     const onCharacterMove = (e) => {
         const character = scenne.getObjectByName(`character-${user}`)
         if (!character) { return }
-        // socket.emit("move", {
-
+        socket.emit(
+            "move",
+            vector3ToGrid(character.position),
+            vector3ToGrid(e.point)
+        )
 
     }
 
@@ -74,11 +80,10 @@ export function Experience() {
                     <AnimatedWoman
                         key={character.id}
                         id={character.id}
-                        position={new THREE.Vector3(
-                            character.position[0] / map.gridDivision + 1 / map.gridDivision / 2,
-                            0,
-                            character.position[1] / map.gridDivision + 1 / map.gridDivision / 2
-                        )}
+                        path={character.path}
+                        position={
+                            gridToVector3(character.position)
+                        }
                         hairColor={character.hairColor}
                         topColor={character.topColor}
                         bottomColor={character.bottomColor}

@@ -9,6 +9,7 @@ import { useFrame, useGraph } from '@react-three/fiber'
 import { SkeletonUtils } from "three-stdlib"
 import { useAtom } from 'jotai'
 import { userAtom } from '../components/SocketManager'
+import { useGrid } from '../hook/useGrid'
 
 /**
  * basic varible
@@ -42,6 +43,17 @@ export function AnimatedWoman({
 
   //clone the skinnedmesh
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene])
+
+  const [path, setPath] = useState([])
+  const { gridToVector3 } = useGrid()
+
+  useEffect(() => {
+    const path = []
+    props.path?.forEach((gridPosition) => {
+      path.push(gridToVector3(gridPosition))
+    });
+    setPath(path)
+  }, [props.path])
 
   //from useGraph to get final clone result
   const { nodes } = useGraph(clone)
@@ -77,16 +89,20 @@ export function AnimatedWoman({
      * if so calculate move direction and step and moving in every frame.
      * eles keep the character in the idle
      */
-    if (group.current.position.distanceTo(props.position) > 0.1) {
+    if (path?.length && group.current.position.distanceTo(props.position) > 0.1) {
       //direction is the step in each frame. the movement_speed determine the step size
       const direction = group.current.position
         .clone()
-        .sub(props.position)
+        .sub(path[0])
         .normalize()
         .multiplyScalar(MOVEMENT_SPEED)
       group.current.position.sub(direction)//change position to next position
-      group.current.lookAt(props.position)// change looking direction
+      group.current.lookAt(path[0])// change looking direction
       setAnimation("CharacterArmature|Run")
+    }
+    else if (path?.length) {
+      path.shift()
+
     }
     else {
       setAnimation("CharacterArmature|Idle")
