@@ -59,7 +59,7 @@ export const SocketManager = () => {
                     if (character.id === value.id) {
                         return value
                     }
-                    return character
+                    return character///
                 })
 
             })
