@@ -286,7 +286,11 @@ const items = {
     },
 };
 
-/** map all the item and floor*/
+/** map all the item and floor(read all the items in the item collection 
+ * an then set their grid postion and three js rotation.
+ * )
+ * 
+*/
 
 const map = {
     size: [10, 10],
@@ -431,8 +435,16 @@ const map = {
  * PathFinding
  */
 
-const grid = new pathfinding.Grid(map.size[0] * map.gridDivision, map.size[1] * map.gridDivision)
+//create a new grid:
+//the grid is defined by the number of cells on width and length
+//the size in the map item is the total width and length. 
+//we multiply the gridDivision to get the number of cells
+const grid = new pathfinding.Grid(
+    map.size[0] * map.gridDivision,
+    map.size[1] * map.gridDivision
+)
 
+//A* pathfinding:https://github.com/qiao/PathFinding.js/
 const finder = new pathfinding.AStarFinder(
     {
         allowDiagnoal: true,
@@ -440,22 +452,32 @@ const finder = new pathfinding.AStarFinder(
     }
 )
 
+//find path method: return an array of coordinates([[x1,y1],[x2,y2]......]) 
+//including both the start and end positions
 const findPath = (start, end) => {
 
-    const gridClone = grid.clone()
+    const gridClone = grid.clone()// each time the new path need a new grid.
+    //major finding function, with start end ending point
     const path = finder.findPath(start[0], start[1], end[0], end[1], gridClone)
     return path
 }
 
+/**
+ * Finding all the un-walkable area based on the current items on the map
+ */
 const updateGrid = () => {
+    //go though all the items 
     map.items.forEach((item) => {
+        //if the item is walkable or wall,the area is walkable, nothing change
         if (item.walkable || item.wall) {
             return
         }
 
+        //other wise, find the width and height of the item
         const width = item.rotation === 1 || item.rotation === 3 ? item.size[1] : item.size[0]
         const height = item.rotation === 1 || item.rotation === 3 ? item.size[0] : item.size[1]
 
+        //set each cell on the grid that occupied by the items to "false" unwalkable.
         for (let x = 0; x < width; x++) {
             for (let y = 0; y < height; y++) {
                 grid.setWalkableAt(
@@ -467,7 +489,7 @@ const updateGrid = () => {
         }
     })
 }
-
+//call the ufunction in the end
 updateGrid()
 
 
@@ -480,13 +502,16 @@ updateGrid()
 //generate random 2D position:
 //
 const generateRandomPosition = () => {
-    for (let i = 0; i < 100; i++) {
-        const x = Math.floor(Math.random() * map.size[0] * map.gridDivision)
-        const y = Math.floor(Math.random() * map.size[1] * map.gridDivision)
-        if (grid.isWalkableAt(x, y)) {
-            return [x, y];
-        }
+    //set initial number of coordinates
+    const x = Math.floor(Math.random() * map.size[0] * map.gridDivision);
+    const y = Math.floor(Math.random() * map.size[1] * map.gridDivision);
+
+    // Regenerate the position if the position is not walkable
+    while (!grid.isWalkableAt(x, y)) {
+        x = Math.floor(Math.random() * map.size[0] * map.gridDivision)
+        y = Math.floor(Math.random() * map.size[1] * map.gridDivision)
     }
+    return [x, y]
 
 
 }
@@ -534,7 +559,9 @@ io.on("connection", (socket) => {
     socket.on("move", (from, to) => {
         const character = characters.find((character) => character.id === socket.id)
 
+        //call findpath function to get the path, if no path, nothring happen.
         const path = findPath(from, to)
+        console.log(path);
         if (!path) {
             return;
         }
