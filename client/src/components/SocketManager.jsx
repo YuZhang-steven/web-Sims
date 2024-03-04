@@ -6,7 +6,12 @@ import { useAtom, atom } from "jotai"
 // this socket has to be able to exported(globally), because we will call it in other components
 export const socket = io("http://localhost:3001")
 
-//create a global state store: Characters, which it is an array to sync the character list with server
+/*
+create a global state store:
+Characters:which it is an array to sync the character list with server
+map: the basic map information and item information
+user: the user id(socket generated id) list
+*/
 export const charactersAtom = atom([])
 export const mapAtom = atom(null)
 export const userAtom = atom(null)
@@ -18,6 +23,7 @@ export const userAtom = atom(null)
  */
 export const SocketManager = () => {
     //create a global state and send previus store in it
+
     //underscore means, the characters should be a private variables
     const [characters, setCharacters] = useAtom(charactersAtom)
     const [map, setMap] = useAtom(mapAtom)
@@ -40,31 +46,35 @@ export const SocketManager = () => {
         }
         function onHello(value) {
             // console.log(value);
-            setMap(value.map)
-            setUser(value.id)
-            setCharacters(value.characters)
+            setMap(value.map)// map information and items
+            setUser(value.id)//socket generated id
+            setCharacters(value.characters)//character list
 
 
         }
 
         //This function is the only function with args,
+        //used to update the client character list with new value
         //because on Index.js, it it the only emit message with name and value.
         function onCharacters(value) {
             setCharacters(value)
         }
 
+
+        //call when player move. return the character need to update
         function onPlayerMove(value) {
             setCharacters((prev) => {
                 return prev.map((character) => {
                     if (character.id === value.id) {
                         return value
                     }
-                    return character///
+                    return character
                 })
 
             })
         }
 
+        //set up the listener to different events
         socket.on("connect", onConnect)
         socket.on("disconnect", onDisconnect)
         socket.on('hello', onHello)
