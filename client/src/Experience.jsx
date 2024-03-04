@@ -43,6 +43,33 @@ export function Experience() {
             dragPosition[1] < 0 || dragPosition[1] + height > map.size[1] * map.gridDivision) {
             droppable = false
         }
+        //check if the item is overlapping with other items
+        //if item is walkable or on the wall, we don't need to check it
+        if (!item.walkable && !item.wall) {
+            items.forEach((otherItem, idx) => {
+                //ignore itself
+                if (idx === draggedItem) {
+                    return
+                }
+                //ignore wall and walkable items
+                if (otherItem.walkable || otherItem.wall) {
+                    return
+                }
+                //check if the item is overlapping with other items
+                //apply width and height
+                const otherWidth = otherItem.rotation === 1 || otherItem.rotation === 3 ? otherItem.size[1] : otherItem.size[0]
+                const otherHeight = otherItem.rotation === 1 || otherItem.rotation === 3 ? otherItem.size[0] : otherItem.size[1]
+
+                if (dragPosition[0] < otherItem.gridPosition[0] + otherWidth &&
+                    dragPosition[0] + width > otherItem.gridPosition[0] &&
+                    dragPosition[1] < otherItem.gridPosition[1] + otherHeight &&
+                    dragPosition[1] + height > otherItem.gridPosition[1]) {
+                    droppable = false
+                }
+
+            });
+        }
+
 
         setCanDrop(droppable)
 
@@ -86,11 +113,13 @@ export function Experience() {
         /** if it is build mode, we move current item */
         else {
             if (draggedItem !== null) {
-                setItems((prev) => {
-                    const newItems = [...prev]
-                    newItems[draggedItem].gridPosition = vector3ToGrid(e.point)
-                    return newItems
-                })
+                if (canDrop) {
+                    setItems((prev) => {
+                        const newItems = [...prev]
+                        newItems[draggedItem].gridPosition = vector3ToGrid(e.point)
+                        return newItems
+                    })
+                }
                 setDraggedItem(null)
             }
         }
