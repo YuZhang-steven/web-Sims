@@ -8,10 +8,22 @@ import { useGrid } from "../hook/useGrid"
 
 /**
  * Item component loading template
- * @param {*} param0 item object : {name, size, gridposition, rotation}
+ * @param {*} param0 
+ * item object : {
+ *      name, 
+ *      size, 
+ *      gridposition,
+ *      rotation
+ * },
+ * onClick effect,
+ * Dragging state,
+ * dragPosition
+ * 
+ * 
+ * 
  * @returns three js primitive with position and rotation
  */
-export const Item = ({ item }) => {
+export const Item = ({ item, onClick, isDragging, dragPosition }) => {
     //decounstruct the item object
     const { name, gridPosition, size, rotation } = item
     // getting map object from the globle sate
@@ -33,7 +45,8 @@ export const Item = ({ item }) => {
     return (
         //create the new primitive object with the cloned mesh and the three js coordinate
         <primitive object={clone}
-            position={gridToVector3(gridPosition, width, height)}
+            onClick={onClick}
+            position={gridToVector3(isDragging ? (dragPosition || gridPosition) : gridPosition, width, height)}
             rotation-y={(rotation || 0) * Math.PI / 2}
         />
 

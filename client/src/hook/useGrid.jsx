@@ -28,12 +28,12 @@ export const useGrid = () => {
     * @param gridPosition [x, y], 
     * @returns three vecotr3
     */
-    const gridToVector3 = (gridPosition, width = 1, heigt = 1) => {
+    const gridToVector3 = (gridPosition, width = 1, height = 1) => {
         return new THREE.Vector3(
             width / map.gridDivision / 2 //width / divistion to get the one cell width in three js coordinate. divide  2 to center the location.
             + gridPosition[0] / map.gridDivision,
             0,
-            heigt / map.gridDivision / 2
+            height / map.gridDivision / 2
             + gridPosition[1] / map.gridDivision
         )
     }
