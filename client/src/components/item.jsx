@@ -23,7 +23,7 @@ import { useGrid } from "../hook/useGrid"
  * 
  * @returns three js primitive with position and rotation
  */
-export const Item = ({ item, onClick, isDragging, dragPosition }) => {
+export const Item = ({ item, onClick, isDragging, dragPosition, canDrop }) => {
     //decounstruct the item object
     const { name, gridPosition, size, rotation } = item
     // getting map object from the globle sate
@@ -44,11 +44,21 @@ export const Item = ({ item, onClick, isDragging, dragPosition }) => {
 
     return (
         //create the new primitive object with the cloned mesh and the three js coordinate
-        <primitive object={clone}
+        <group
             onClick={onClick}
             position={gridToVector3(isDragging ? (dragPosition || gridPosition) : gridPosition, width, height)}
-            rotation-y={(rotation || 0) * Math.PI / 2}
-        />
+        >
+            <primitive object={clone}
+                rotation-y={(rotation || 0) * Math.PI / 2}
+            />
+            {isDragging && (
+                <mesh>
+                    <boxGeometry args={[width / map.gridDivision, 0.2, height / map.gridDivision]} />
+                    <meshBasicMaterial color={canDrop ? 'green' : 'red'} opacity={0.3} transparent />
+                </mesh>
+            )}
+
+        </group>
 
     )
 }

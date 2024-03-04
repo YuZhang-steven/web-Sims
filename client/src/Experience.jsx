@@ -23,7 +23,31 @@ export function Experience() {
     //The items we are dragging
     const [draggedItem, setDraggedItem] = useState(null)
     const [dragPosition, setDragPosition] = useState(null)
+    const [canDrop, setCanDrop] = useState(false)
     const [items, setItems] = useState(map.items)
+
+    useEffect(() => {
+        //if we don drag item,we don't care about update
+        if (!draggedItem) {
+            return
+        }
+        const item = items[draggedItem]
+        const width = item.rotation === 1 || item.rotation === 3 ? item.size[1] : item.size[0]
+        const height = item.rotation === 1 || item.rotation === 3 ? item.size[0] : item.size[1]
+
+        let droppable = true
+
+        /** Check if we can drop the item in current location */
+        //check if item in bound
+        if (dragPosition[0] < 0 || dragPosition[0] + width > map.size[0] * map.gridDivision ||
+            dragPosition[1] < 0 || dragPosition[1] + height > map.size[1] * map.gridDivision) {
+            droppable = false
+        }
+
+        setCanDrop(droppable)
+
+
+    }, [dragPosition, draggedItem, items])
 
 
 
@@ -140,6 +164,7 @@ export function Experience() {
                     }
                     isDragging={draggedItem === idx}
                     dragPosition={dragPosition}
+                    canDrop={canDrop}
                 />
             ))}
 
