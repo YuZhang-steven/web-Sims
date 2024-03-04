@@ -22,7 +22,7 @@ const MOVEMENT_SPEED = 0.032//character move speed
  * hair color 
  * top color 
  * bottom color
- * } param0 
+ * } 
  * @returns 
  * An woman chracters
  */
@@ -44,15 +44,22 @@ export function AnimatedWoman({
   //clone the skinnedmesh
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene])
 
-  const [path, setPath] = useState([])
-  const { gridToVector3 } = useGrid()
+  const [path, setPath] = useState([])//moving poth store
+
+  const { gridToVector3 } = useGrid()//grid coordinate convert method
 
   useEffect(() => {
     const path = []
+
+    /**
+     * when getting the path from the server, convert the grid position to the vector3 position
+     * change the path state, rerender the component
+     */
     props.path?.forEach((gridPosition) => {
       path.push(gridToVector3(gridPosition))
     });
     setPath(path)
+
   }, [props.path])
 
   //from useGraph to get final clone result
@@ -85,11 +92,16 @@ export function AnimatedWoman({
   useFrame((state) => {
 
     /**
-     * Cheack if the current position is different with character list position.
-     * if so calculate move direction and step and moving in every frame.
-     * eles keep the character in the idle
+     * moving animnation:
+     * when anytime, path state has value, length more than 0, the animation start to working
+     * the first position in the path arrat is same as current, so it will just be removed.
+     * since the section one:
+     * the animation reset,
+     * recalculate the direction and position and gradually move.
+     * 
      */
-    if (path?.length && group.current.position.distanceTo(props.position) > 0.1) {
+    if (path?.length && group.current.position.distanceTo(path[0]) > 0.1) {
+
       //direction is the step in each frame. the movement_speed determine the step size
       const direction = group.current.position
         .clone()
@@ -109,7 +121,7 @@ export function AnimatedWoman({
     }
 
     /**
-     * 
+     * camera follow the user moving
      */
     if (id === user) {
       state.camera.position.x = group.current.position.x + 8

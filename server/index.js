@@ -561,15 +561,15 @@ io.on("connection", (socket) => {
 
         //call findpath function to get the path, if no path, nothring happen.
         const path = findPath(from, to)
-        console.log(path);
+        // console.log(path);
         if (!path) {
             return;
         }
 
         character.position = from;
         character.path = path
-        // console.log(path);
-        io.emit("playerMove", characters)
+
+        io.emit("playerMove", character)//here emit the specific character, rather than whole list
 
     })
 
