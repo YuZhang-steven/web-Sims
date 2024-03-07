@@ -2,6 +2,8 @@ import { OrbitControls } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { Experience } from './Experience'
 import { SocketManager } from './components/SocketManager'
+import { UI } from './components/UI'
+
 
 
 /**
@@ -23,6 +25,8 @@ function App() {
         <OrbitControls />
         <Experience />
       </Canvas>
+
+      <UI />
     </>
   )
 }
