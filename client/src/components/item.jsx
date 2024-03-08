@@ -1,9 +1,11 @@
-import { useGLTF } from "@react-three/drei"
+import { useCursor, useGLTF } from "@react-three/drei"
 import { useAtom } from "jotai"
 import { mapAtom } from "./SocketManager"
 import { SkeletonUtils } from "three-stdlib"
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useGrid } from "../hook/useGrid"
+import { buildModeAtom } from "./UI"
+
 
 
 /**
@@ -44,12 +46,19 @@ export const Item = ({ item, onClick, isDragging, dragPosition, dragrotation, ca
     //get the gridToVector3 method from the useGrid hook
     const { gridToVector3 } = useGrid()
 
+    const [hover, setHover] = useState(false)
+    const [buildMode] = useAtom(buildModeAtom)
+
+    useCursor(buildMode ? hover : undefined)
+
 
     return (
         //create the new primitive object with the cloned mesh and the three js coordinate
         <group
             onClick={onClick}
             position={gridToVector3(isDragging ? (dragPosition || gridPosition) : gridPosition, width, height)}
+            onPointerEnter={() => setHover(true)}
+            onPointerLeave={() => setHover(false)}
         >
             <primitive object={clone}
                 rotation-y={(rotation || 0) * Math.PI / 2}
