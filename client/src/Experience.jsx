@@ -2,26 +2,27 @@ import { useAtom } from "jotai"
 import * as THREE from "three"
 
 
-import { ContactShadows, Environment, Grid, useCursor } from "@react-three/drei";
+import { ContactShadows, Environment, Grid, useCursor, OrbitControls } from "@react-three/drei";
 import { AnimatedWoman } from "./assets/AnimatedWoman";
 import { charactersAtom, mapAtom, socket, userAtom } from "./components/SocketManager";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Item } from "./components/item";
 import { useThree } from "@react-three/fiber";
 import { useGrid } from "./hook/useGrid";
+import { buildModeAtom, draggedItemAtom, draggedItemRotationAtom } from "./components/UI";
 
 
 export function Experience() {
     //change between playing and building mode
-    const [buildMode, setBuildMode] = useState(true)
-
+    const [buildMode, setBuildMode] = useAtom(buildModeAtom)
     //get the character list from the socket message
     const [characters] = useAtom(charactersAtom)
     //get the map information from the socket message
     const [map] = useAtom(mapAtom)
 
     //The items we are dragging
-    const [draggedItem, setDraggedItem] = useState(null)
+    const [draggedItem, setDraggedItem] = useAtom(draggedItemAtom)
+    const [draggedItemRotation, setDraggedItemRotation] = useAtom(draggedItemRotationAtom)
     const [dragPosition, setDragPosition] = useState(null)
     const [canDrop, setCanDrop] = useState(false)
     const [items, setItems] = useState(map.items)
@@ -117,6 +118,7 @@ export function Experience() {
                     setItems((prev) => {
                         const newItems = [...prev]
                         newItems[draggedItem].gridPosition = vector3ToGrid(e.point)
+                        newItems[draggedItem].rotation = draggedItemRotation
                         return newItems
                     })
                 }
@@ -135,12 +137,30 @@ export function Experience() {
     useCursor(onFoor)
 
 
+    const controls = useRef()
+    const state = useThree((state) => state)
+
+    useEffect(() => {
+        if (buildMode) {
+            state.camera.position.set(8, 8, 8)
+            controls.current.target.set(0, 0, 0)
+        }
+    }, [buildMode])
+
 
     return (
         <>
             {/* Environment setting */}
             <Environment preset="sunset" />
             <ambientLight intensity={0.3} />
+            <OrbitControls
+                ref={controls}
+                minDistance={5}
+                maxDistance={20}
+                minPolarAngle={0}
+                maxPolarAngle={Math.PI / 2}
+                screenSpacePanning={false}
+            />
             {/* <ContactShadows blur={2.5} /> */}
 
             {/*  Floor */}
@@ -189,10 +209,18 @@ export function Experience() {
                     onClick={
                         // if there is already an item in dragged satate, 
                         //even we click new item, it still keep the previous item
-                        () => setDraggedItem((prev) => (prev === null ? idx : prev))
+                        () => {
+                            if (buildMode) {
+                                setDraggedItem((prev) => (prev === null ? idx : prev))
+                                setDraggedItemRotation(item.rotation || 0)
+                            }
+
+                        }
+
                     }
                     isDragging={draggedItem === idx}
                     dragPosition={dragPosition}
+                    dragRotation={draggedItemRotation}
                     canDrop={canDrop}
                 />
             ))}

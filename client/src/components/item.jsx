@@ -23,9 +23,12 @@ import { useGrid } from "../hook/useGrid"
  * 
  * @returns three js primitive with position and rotation
  */
-export const Item = ({ item, onClick, isDragging, dragPosition, canDrop }) => {
+export const Item = ({ item, onClick, isDragging, dragPosition, dragrotation, canDrop }) => {
     //decounstruct the item object
-    const { name, gridPosition, size, rotation } = item
+    const { name, gridPosition, size, rotation: itemRotaion } = item
+
+    const rotation = isDragging ? dragrotation : itemRotaion
+
     // getting map object from the globle sate
     const [map] = useAtom(mapAtom)
     //load the gltf file
