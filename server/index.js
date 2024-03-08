@@ -466,6 +466,13 @@ const findPath = (start, end) => {
  * Finding all the un-walkable area based on the current items on the map
  */
 const updateGrid = () => {
+    //reset grid to true in everywhere
+    for (let x = 0; x < map.size[0] * map.gridDivision; x++) {
+        for (let y = 0; y < map.size[1] * map.gridDivision; y++) {
+            grid.setWalkableAt(x, y, true)
+        }
+    }
+
     //go though all the items 
     map.items.forEach((item) => {
         //if the item is walkable or wall,the area is walkable, nothing change
@@ -572,6 +579,23 @@ io.on("connection", (socket) => {
         io.emit("playerMove", character)//here emit the specific character, rather than whole list
 
     })
+
+    socket.on("itemsUpdate", (items) => {
+        map.items = items
+        characters.forEach((character) => {
+            character.path = []
+            character.position = generateRandomPosition()
+        })
+        updateGrid()//update the grid based on the new items layout
+        io.emit("mapUpdate", {
+            map,
+            characters
+
+        })
+
+    })
+
+
 
 
     //"disconnect event listener"

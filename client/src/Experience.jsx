@@ -142,8 +142,13 @@ export function Experience() {
 
     useEffect(() => {
         if (buildMode) {
+            setItems(map?.items || [])
             state.camera.position.set(8, 8, 8)
             controls.current.target.set(0, 0, 0)
+        }
+        //when left the build mode, call server update the items
+        else {
+            socket.emit("itemsUpdated", items)
         }
     }, [buildMode])
 
