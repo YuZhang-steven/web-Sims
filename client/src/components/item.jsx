@@ -25,11 +25,11 @@ import { buildModeAtom } from "./UI"
  * 
  * @returns three js primitive with position and rotation
  */
-export const Item = ({ item, onClick, isDragging, dragPosition, dragrotation, canDrop }) => {
+export const Item = ({ item, onClick, isDragging, dragPosition, dragRotation, canDrop }) => {
     //decounstruct the item object
     const { name, gridPosition, size, rotation: itemRotaion } = item
 
-    const rotation = isDragging ? dragrotation : itemRotaion
+    const rotation = isDragging ? dragRotation : itemRotaion
 
     // getting map object from the globle sate
     const [map] = useAtom(mapAtom)

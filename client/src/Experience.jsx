@@ -1,5 +1,5 @@
 import { useAtom } from "jotai"
-import * as THREE from "three"
+
 
 
 import { ContactShadows, Environment, Grid, useCursor, OrbitControls } from "@react-three/drei";
@@ -13,19 +13,96 @@ import { buildModeAtom, draggedItemAtom, draggedItemRotationAtom } from "./compo
 
 
 export function Experience() {
+    /**
+     * Gloabal state(create)
+     */
+
     //change between playing and building mode
     const [buildMode, setBuildMode] = useAtom(buildModeAtom)
+    //The items we are dragging
+    const [draggedItem, setDraggedItem] = useAtom(draggedItemAtom)
+    const [draggedItemRotation, setDraggedItemRotation] = useAtom(draggedItemRotationAtom)
+
+    /**
+     * Global state(consume)
+     */
+
     //get the character list from the socket message
     const [characters] = useAtom(charactersAtom)
     //get the map information from the socket message
     const [map] = useAtom(mapAtom)
+    //retrieve current user id
+    const [user] = useAtom(userAtom)
 
-    //The items we are dragging
-    const [draggedItem, setDraggedItem] = useAtom(draggedItemAtom)
-    const [draggedItemRotation, setDraggedItemRotation] = useAtom(draggedItemRotationAtom)
+    /**
+     * Local state
+     */
+
     const [dragPosition, setDragPosition] = useState(null)
     const [canDrop, setCanDrop] = useState(false)
     const [items, setItems] = useState(map.items)
+    // set the effect that when cursor on specific situation, it become the hand pointer symbol
+    const [onFoor, setOnFloor] = useState(false)
+
+    /**
+     * Hook
+     */
+    //get the coordinate convert method from the useGrid hook
+    const { vector3ToGrid, gridToVector3 } = useGrid()
+    useCursor(onFoor)
+    const controls = useRef()
+    //This hook gives you access to the state model which 
+    //contains the default renderer, the scene, your camera, and so on.
+    //It also gives you the current size of the canvas in screen and viewport coordinates.
+    const state = useThree((state) => state)
+    const scene = useThree((state) => state.scene)
+
+    /**
+     * function hangle
+     * 
+     */
+
+    /**
+ * the function to handle the character move
+ * @param {*} e mouse click location(the final destination of the character)
+ * character.position, the start postion.
+ */
+
+    const onPlaneClicked = (e) => {
+        /** if it is on character mode, we do character move */
+        if (!buildMode) {
+            //find the right character in the character list
+            const character = scene.getObjectByName(`character-${user}`)
+            if (!character) {
+                return
+            }
+            socket.emit(
+                "move",
+                vector3ToGrid(character.position),
+                vector3ToGrid(e.point)
+            )
+        }
+        /** if it is build mode, we move current item */
+        else {
+            if (draggedItem !== null) {
+                if (canDrop) {
+                    setItems((prev) => {
+                        const newItems = [...prev]
+                        newItems[draggedItem].gridPosition = vector3ToGrid(e.point)
+                        newItems[draggedItem].rotation = draggedItemRotation
+                        return newItems
+                    })
+                }
+                setDraggedItem(null)
+            }
+        }
+
+    }
+
+    /**
+     * Effect handle
+     */
+
 
     useEffect(() => {
         //if we don drag item,we don't care about update
@@ -77,69 +154,6 @@ export function Experience() {
 
     }, [dragPosition, draggedItem, items])
 
-
-
-    //get the coordinate convert method from the useGrid hook
-    const { vector3ToGrid, gridToVector3 } = useGrid()
-
-    //future funcion to check if data loaded
-    // const [dataReady, setDataReady] = useState(false)
-
-    //This hook gives you access to the state model which 
-    //contains the default renderer, the scene, your camera, and so on.
-    //It also gives you the current size of the canvas in screen and viewport coordinates.
-    const scene = useThree((state) => state.scene)
-    const [user] = useAtom(userAtom)//retrieve current user id
-
-    /**
-     * the function to handle the character move
-     * @param {*} e mouse click location(the final destination of the character)
-     * character.position, the start postion.
-     */
-
-    const onPlaneClicked = (e) => {
-        /** if it is on character mode, we do character move */
-        if (!buildMode) {
-            //find the right character in the character list
-            const character = scene.getObjectByName(`character-${user}`)
-            if (!character) {
-                return
-            }
-            socket.emit(
-                "move",
-                vector3ToGrid(character.position),
-                vector3ToGrid(e.point)
-            )
-        }
-        /** if it is build mode, we move current item */
-        else {
-            if (draggedItem !== null) {
-                if (canDrop) {
-                    setItems((prev) => {
-                        const newItems = [...prev]
-                        newItems[draggedItem].gridPosition = vector3ToGrid(e.point)
-                        newItems[draggedItem].rotation = draggedItemRotation
-                        return newItems
-                    })
-                }
-                setDraggedItem(null)
-            }
-        }
-
-    }
-
-
-
-
-
-    // set the effect that when cursor on specific situation, it become the hand pointer symbol
-    const [onFoor, setOnFloor] = useState(false)
-    useCursor(onFoor)
-
-
-    const controls = useRef()
-    const state = useThree((state) => state)
-
     useEffect(() => {
         if (buildMode) {
             setItems(map?.items || [])
@@ -151,7 +165,6 @@ export function Experience() {
             socket.emit("itemsUpdated", items)
         }
     }, [buildMode])
-
 
     return (
         <>
@@ -219,7 +232,6 @@ export function Experience() {
                                 setDraggedItem((prev) => (prev === null ? idx : prev))
                                 setDraggedItemRotation(item.rotation || 0)
                             }
-
                         }
 
                     }
@@ -252,10 +264,6 @@ export function Experience() {
             }
 
 
-
-            {/* test characters */}
-            {/* <AnimatedWoman />
-            <AnimatedWoman position-x={1} hairColor="red" topColor="cyan" /> */}
         </>
     )
 }
