@@ -22,7 +22,7 @@ export const userAtom = atom(null)
  * Major socketManager component
  */
 export const SocketManager = () => {
-    //create a global state and send previus store in it
+    //use gloabal state
 
     //underscore means, the characters should be a private variables
     const [characters, setCharacters] = useAtom(charactersAtom)
@@ -44,9 +44,11 @@ export const SocketManager = () => {
         function onDisconnect() {
             console.log("disconnected")
         }
+        //get initial information from server
         function onHello(value) {
-            // console.log(value);
-            setMap(value.map)// map information and items
+
+            //store the information to the global state
+            setMap(value.map)// store map and item information 
             setUser(value.id)//socket generated id
             setCharacters(value.characters)//character list
 
@@ -54,7 +56,7 @@ export const SocketManager = () => {
         }
 
         //This function is the only function with args,
-        //used to update the client character list with new value
+        //used to update the client character list with new character list 
         //because on Index.js, it it the only emit message with name and value.
         function onCharacters(value) {
             setCharacters(value)
@@ -74,6 +76,7 @@ export const SocketManager = () => {
             })
         }
 
+        //up date user/map/characters all information at the same time
         function onMapUpdate(value) {
             setMap(value.map)
             setUser(value.id)

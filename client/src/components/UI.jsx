@@ -1,12 +1,23 @@
 import { atom, useAtom } from "jotai";
+/**
+ * Basic UI Interface with different buttons
+ */
 
+
+/**
+ * Global State Creation
+ */
+//build mode
 export const buildModeAtom = atom(false)
+//shop mode
 export const shopModeAtom = atom(false)
+//dragged item  ID
 export const draggedItemAtom = atom(null)
+//dragged item rotation
 export const draggedItemRotationAtom = atom(0)
 
 export function UI() {
-
+    /** Global stabtion reset */
     const [buildMode, setBuildMode] = useAtom(buildModeAtom)
     const [shopMode, setShopMode] = useAtom(shopModeAtom)
     const [draggedItem, setDraggedItem] = useAtom(draggedItemAtom)
@@ -16,10 +27,13 @@ export function UI() {
     return (
         <div className="fixed inset-4 flex items-end justify-center pointer-events-none">
             <div className="flex items-center space-x-4 pointer-events-auto">
-                {/* BACK */}
+                {/* BACK button: back from the build or shop mode to the playing mode*/}
+                {/* only render in shop or build mode when not dragging an item */}
                 {
+
                     (buildMode || shopMode) && !draggedItem && (<button
                         className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
+                        //click set the build or shop mode global state to false
                         onClick={
                             () => {
                                 shopMode ? setShopMode(false) : setBuildMode(false);
@@ -39,9 +53,10 @@ export function UI() {
                         </svg>
                     </button>
                     )}
-                {/* BUILD */}
+                {/* BUILD mode button, only render in the playing mode*/}
                 {!buildMode && !shopMode && (<button
                     className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
+                    //click to set buildmode to true, shopmode to false
                     onClick={
                         () => {
                             setBuildMode(true)
@@ -65,7 +80,8 @@ export function UI() {
                     </svg>
                 </button>
                 )}
-                {/* SHOP */}
+                {/* SHOP mode button*/}
+                {/* only render in the playing mode */}
                 {buildMode && !shopMode && !draggedItem && (<button
                     className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
                     onClick={
@@ -91,10 +107,12 @@ export function UI() {
                     </svg>
                 </button>
                 )}
-                {/* ROTATE */}
+                {/* ROTATE button*/}
+                {/* only render in the build mode when dragging item */}
                 {buildMode && !shopMode && draggedItem && (
                     <button
                         className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
+                        //click to pass a function that call set draggedItemRotation to the current rotation + 1, if it is 3, set it to 0.
                         onClick={
                             () => setDraggedItemRotation(draggedItemRotation === 3 ? 0 : draggedItemRotation + 1)
                         }
@@ -115,8 +133,8 @@ export function UI() {
                         </svg>
                     </button>
                 )}
-                {/* CANCEL */}
-                {buildMode && !shopMode && !draggedItem && (
+                {/* CANCEL button: cancel the dragging object*/}
+                {buildMode && !shopMode && draggedItem && (
                     <button
                         className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
                         onClick={() => setDraggedItem(null)}

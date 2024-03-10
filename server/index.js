@@ -1,7 +1,7 @@
 
 import pathfinding from "pathfinding";
 import { Server } from "socket.io";
-// import { Item } from "../client/src/components/item";
+
 /**
  * initialize server
  */
@@ -580,13 +580,19 @@ io.on("connection", (socket) => {
 
     })
 
+    /**
+     * client event listener: itemsupdate. 
+     */
     socket.on("itemsUpdate", (items) => {
+        //receive the new items list from the client and update server items map
         map.items = items
+        //update all characters location to not intersect with the new items layout
         characters.forEach((character) => {
             character.path = []
             character.position = generateRandomPosition()
         })
         updateGrid()//update the grid based on the new items layout
+        //server emit the new map and character list to all the clients
         io.emit("mapUpdate", {
             map,
             characters
