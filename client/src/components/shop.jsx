@@ -30,7 +30,7 @@ const ShopItem = ({ item, ...props }) => {
     )
 }
 
-export const Shop = () => {
+export const Shop = ({ onItemSelected }) => {
 
     //Retrive the item on the original status just as the blender files. no position information on the map
     const [items] = useAtom(itemsAtom)
@@ -57,6 +57,7 @@ export const Shop = () => {
                     key={index}
                     position-x={xPos}
                     item={item}
+                    onClick={() => onItemSelected(item)}
 
                 />)
 

@@ -46,7 +46,7 @@ export function Experience() {
      */
 
     //current item position(current mouse position when dragging the item).Grid coordinate array [x, y ]
-    const [dragPosition, setDragPosition] = useState(null)
+    const [dragPosition, setDragPosition] = useState([0, 0])
     //check if the item can be dropped in the current location without the collision with other items
     const [canDrop, setCanDrop] = useState(false)
     //the whole scene(map) item list
@@ -108,6 +108,7 @@ export function Experience() {
                     //pass the setItems function to the Items state
                     setItems((prev) => {
                         const newItems = [...prev]// find the location of the new item list
+                        delete newItems[draggedItem].tmp//delete the tmp tag
                         //find the object in the item list and update its position and rotation
                         newItems[draggedItem].gridPosition = vector3ToGrid(e.point)
                         newItems[draggedItem].rotation = draggedItemRotation
@@ -121,6 +122,21 @@ export function Experience() {
         }
 
     }
+
+    const onItemSelected = (item) => {
+        setShopMode(false)
+        setItems((prev) => [
+            ...prev,
+            {
+                ...item,
+                gridPosition: [0, 0],
+                tmp: true
+            }
+        ])
+        setDraggedItem(items.length)
+        setDraggedItemRotation(0)
+    }
+
 
     /**
      * Effect handle
@@ -224,6 +240,17 @@ export function Experience() {
         }
     }, [shopMode])
 
+    /**
+     * handle select items from shop and cancel it
+     */
+
+    useEffect(() => {
+        if (draggedItem === null) {
+            setItems((prev) => prev.filter((item) => !item.tmp))
+        }
+    }, [draggedItem])
+
+
     return (
         <>
             {/* Environment setting */}
@@ -254,7 +281,7 @@ export function Experience() {
             {/* <ContactShadows blur={2.5} /> */}
 
             {/* Shop:only render in the shop mode and don't have to render anything else */}
-            {shopMode && <Shop />}
+            {shopMode && <Shop onItemSelected={onItemSelected} />}
 
             {/*  Floor */}
             {!shopMode &&
