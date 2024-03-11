@@ -15,6 +15,8 @@ user: the user id(socket generated id) list
 export const charactersAtom = atom([])
 export const mapAtom = atom(null)
 export const userAtom = atom(null)
+export const itemsAtom = atom(null)
+
 
 
 
@@ -28,6 +30,7 @@ export const SocketManager = () => {
     const [characters, setCharacters] = useAtom(charactersAtom)
     const [map, setMap] = useAtom(mapAtom)
     const [user, setUser] = useAtom(userAtom)
+    const [items, setItems] = useAtom(itemsAtom)
 
     /** UseEffect without dependency, only run once on initial mount.
      * it set up the listener to different events and turn off those listeners when component unmount
@@ -51,6 +54,7 @@ export const SocketManager = () => {
             setMap(value.map)// store map and item information 
             setUser(value.id)//socket generated id
             setCharacters(value.characters)//character list
+            setItems(value.items)//the item in here not include the location on the specific map
 
 
         }
@@ -78,6 +82,7 @@ export const SocketManager = () => {
 
         //up date user/map/characters all information at the same time
         function onMapUpdate(value) {
+
             setMap(value.map)
             setUser(value.id)
             setCharacters(value.characters)

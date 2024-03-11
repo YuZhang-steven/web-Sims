@@ -23,6 +23,7 @@ const characters = []
 
 /**
  * item dictionary
+ * item in here only has the original location and rotaion as in the blender
  */
 const items = {
     washer: {
@@ -288,6 +289,7 @@ const items = {
 
 /** map all the item and floor(read all the items in the item collection 
  * an then set their grid postion and three js rotation.
+ * the items inside the map have the initial location and rotationn in the map
  * )
  * 
 */

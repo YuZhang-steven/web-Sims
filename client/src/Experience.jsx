@@ -10,6 +10,7 @@ import { Item } from "./components/item";
 import { useThree } from "@react-three/fiber";
 import { useGrid } from "./hook/useGrid";
 import { buildModeAtom, draggedItemAtom, draggedItemRotationAtom, shopModeAtom } from "./components/UI";
+import { Shop } from "./components/shop";
 
 
 export function Experience() {
@@ -204,6 +205,25 @@ export function Experience() {
         }
     }, [buildMode])
 
+
+    /**
+         * shopmode change effect
+         */
+    useEffect(() => {
+        //when enter the shop mode, 
+        if (shopMode) {
+            setItems(map?.items || [])
+            state.camera.position.set(0, 4, 8)
+            controls.current.target.set(0, 0, 0)
+        }
+        //when left the shop mode, we back to the build mode initial loacation
+        else {
+            state.camera.position.set(8, 8, 8)
+            controls.current.target.set(0, 0, 0)
+
+        }
+    }, [shopMode])
+
     return (
         <>
             {/* Environment setting */}
@@ -229,8 +249,12 @@ export function Experience() {
                 minPolarAngle={0}
                 maxPolarAngle={Math.PI / 2}
                 screenSpacePanning={false}
+                enableZoom={!shopMode}
             />
             {/* <ContactShadows blur={2.5} /> */}
+
+            {/* Shop:only render in the shop mode and don't have to render anything else */}
+            {shopMode && <Shop />}
 
             {/*  Floor */}
             {!shopMode &&
