@@ -509,19 +509,28 @@ updateGrid()
 //generate random 2D position:
 //
 const generateRandomPosition = () => {
-    //set initial number of coordinates
-    const x = Math.floor(Math.random() * map.size[0] * map.gridDivision);
-    const y = Math.floor(Math.random() * map.size[1] * map.gridDivision);
-
-    // Regenerate the position if the position is not walkable
-    while (!grid.isWalkableAt(x, y)) {
-        x = Math.floor(Math.random() * map.size[0] * map.gridDivision)
-        y = Math.floor(Math.random() * map.size[1] * map.gridDivision)
+    for (let i = 0; i < 100; i++) {
+        const x = Math.floor(Math.random() * map.size[0] * map.gridDivision);
+        const y = Math.floor(Math.random() * map.size[1] * map.gridDivision);
+        if (grid.isWalkableAt(x, y)) {
+            return [x, y];
+        }
     }
-    return [x, y]
+};
+// {
+//     //set initial number of coordinates
+//     const x = Math.floor(Math.random() * map.size[0] * map.gridDivision);
+//     const y = Math.floor(Math.random() * map.size[1] * map.gridDivision);
+
+//     // Regenerate the position if the position is not walkable
+//     while (!grid.isWalkableAt(x, y)) {
+//         x = Math.floor(Math.random() * map.size[0] * map.gridDivision)
+//         y = Math.floor(Math.random() * map.size[1] * map.gridDivision)
+//     }
+//     return [x, y]
 
 
-}
+// }
 
 //generate random hex color
 const generateRandomHexColor = () => {

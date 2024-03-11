@@ -140,8 +140,8 @@ export function Experience() {
         //retrive dragged item form item list based on id
         const item = items[draggedItem]
         //find and recalculate the size of the item
-        const width = item.rotation === 1 || item.rotation === 3 ? item.size[1] : item.size[0]
-        const height = item.rotation === 1 || item.rotation === 3 ? item.size[0] : item.size[1]
+        const width = draggedItemRotation === 1 || draggedItemRotation === 3 ? item.size[1] : item.size[0]
+        const height = draggedItemRotation === 1 || draggedItemRotation === 3 ? item.size[0] : item.size[1]
 
         //drap location validation tag
         let droppable = true
@@ -184,7 +184,7 @@ export function Experience() {
         setCanDrop(droppable)
 
 
-    }, [dragPosition, draggedItem, items])
+    }, [dragPosition, draggedItem, items, draggedItemRotation])
 
     /**
      * buildMode change effect
