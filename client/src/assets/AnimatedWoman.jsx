@@ -152,6 +152,7 @@ export function AnimatedWoman({
               geometry={nodes.Casual_Body_1.geometry}
               material={materials.White}
               skeleton={nodes.Casual_Body_1.skeleton}
+              castShadow
             >
               {/* change material and set the color */}
               <meshStandardMaterial color={topColor} />
@@ -162,12 +163,23 @@ export function AnimatedWoman({
               geometry={nodes.Casual_Body_2.geometry}
               material={materials.Skin}
               skeleton={nodes.Casual_Body_2.skeleton}
+              castShadow
 
             />
           </group>
           <group name="Casual_Feet" rotation={[-Math.PI / 2, 0, 0]} scale={100}>
-            <skinnedMesh name="Casual_Feet_1" geometry={nodes.Casual_Feet_1.geometry} material={materials.Skin} skeleton={nodes.Casual_Feet_1.skeleton} />
-            <skinnedMesh name="Casual_Feet_2" geometry={nodes.Casual_Feet_2.geometry} material={materials.Grey} skeleton={nodes.Casual_Feet_2.skeleton} />
+            <skinnedMesh
+              castShadow
+              name="Casual_Feet_1"
+              geometry={nodes.Casual_Feet_1.geometry}
+              material={materials.Skin}
+              skeleton={nodes.Casual_Feet_1.skeleton} />
+            <skinnedMesh
+              castShadow
+              name="Casual_Feet_2"
+              geometry={nodes.Casual_Feet_2.geometry}
+              material={materials.Grey}
+              skeleton={nodes.Casual_Feet_2.skeleton} />
           </group>
           <group name="Casual_Head" rotation={[-Math.PI / 2, 0, 0]} scale={100}>
             <skinnedMesh
@@ -175,6 +187,8 @@ export function AnimatedWoman({
               geometry={nodes.Casual_Head_1.geometry}
               material={materials.Skin}
               skeleton={nodes.Casual_Head_1.skeleton}
+              castShadow
+
             />
 
             <skinnedMesh
@@ -182,6 +196,8 @@ export function AnimatedWoman({
               geometry={nodes.Casual_Head_2.geometry}
               material={materials.Hair_Blond}
               skeleton={nodes.Casual_Head_2.skeleton}
+              castShadow
+
             >
               {/* change material and set the color */}
               <meshStandardMaterial color={hairColor} />
@@ -192,6 +208,8 @@ export function AnimatedWoman({
               geometry={nodes.Casual_Head_3.geometry}
               material={materials.Hair_Brown}
               skeleton={nodes.Casual_Head_3.skeleton}
+              castShadow
+
             />
 
             <skinnedMesh
@@ -199,6 +217,8 @@ export function AnimatedWoman({
               geometry={nodes.Casual_Head_4.geometry}
               material={materials.Brown}
               skeleton={nodes.Casual_Head_4.skeleton}
+              castShadow
+
             />
 
           </group>
@@ -209,6 +229,8 @@ export function AnimatedWoman({
             skeleton={nodes.Casual_Legs.skeleton}
             rotation={[-Math.PI / 2, 0, 0]}
             scale={100}
+            castShadow
+
           >
             {/* change material and set the color */}
             <meshStandardMaterial color={bottomColor} />

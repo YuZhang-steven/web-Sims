@@ -20,7 +20,10 @@ function App() {
       <SocketManager />
 
       {/* major three js function */}
-      <Canvas shadows camera={{ position: [8, 8, 8], fov: 30 }}>
+      <Canvas
+        shadows
+        camera={{ position: [8, 8, 8], fov: 30 }}
+      >
         <color attach="background" args={["#ececec"]}></color>
 
         <Experience />

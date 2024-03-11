@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { Item } from "./components/item";
 import { useThree } from "@react-three/fiber";
 import { useGrid } from "./hook/useGrid";
-import { buildModeAtom, draggedItemAtom, draggedItemRotationAtom } from "./components/UI";
+import { buildModeAtom, draggedItemAtom, draggedItemRotationAtom, shopModeAtom } from "./components/UI";
 
 
 export function Experience() {
@@ -24,8 +24,10 @@ export function Experience() {
      */
 
 
-    //change between playing and building mode
+    //change to build mode
     const [buildMode, setBuildMode] = useAtom(buildModeAtom)
+    //change to shop mode
+    const [shopMode, setShopMode] = useAtom(shopModeAtom)
     //1.check if we are dragging an item 2. store the id of the item
     const [draggedItem, setDraggedItem] = useAtom(draggedItemAtom)
     //store the current dragged item's rotation
@@ -206,7 +208,20 @@ export function Experience() {
         <>
             {/* Environment setting */}
             <Environment preset="sunset" />
-            <ambientLight intensity={0.3} />
+            <ambientLight intensity={0.1} />
+            <directionalLight
+                position={[-4, 4, -4]}
+                castShadow
+                intensity={0.35}
+                shadow-mapSize={[1024, 1024]}
+
+            >
+                <orthographicCamera
+                    attach={"shadow-camera"}
+                    args={[-map.size[0], map.size[1], 10, -10]}
+                    far={map.size[0] + map.size[1]}
+                />
+            </directionalLight>
             <OrbitControls
                 ref={controls}
                 minDistance={5}
@@ -247,13 +262,18 @@ export function Experience() {
 
                 position-x={map.size[0] / 2}
                 position-z={map.size[1] / 2}
+                receiveShadow
             >
                 <planeGeometry args={map.size} />
                 <meshStandardMaterial color={"#f0f0f0"} />
             </mesh>
 
             {/* visualsed grid  size is 1 unit of three js coordinate*/}
-            <Grid infiniteGrid fadeDistance={50} fadeStrength={5} />
+            {/*conditiontal rendering, only show grid in the build mode but not shop mode(when in the shop mode, we are in the build mode at the same time) */}
+            {buildMode && !shopMode &&
+                <Grid infiniteGrid fadeDistance={50} fadeStrength={5} />
+            }
+
 
             {/* loading all items, in the building mode, we use current item list
             when leave the building mode, we retrieve the new list from global state

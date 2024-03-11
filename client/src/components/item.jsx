@@ -2,7 +2,7 @@ import { useCursor, useGLTF } from "@react-three/drei"
 import { useAtom } from "jotai"
 import { mapAtom } from "./SocketManager"
 import { SkeletonUtils } from "three-stdlib"
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useGrid } from "../hook/useGrid"
 import { buildModeAtom } from "./UI"
 
@@ -55,6 +55,17 @@ export const Item = ({ item, onClick, isDragging, dragPosition, dragRotation, ca
     /**Hook */
     //change the cursor to reflect hover state when in build mode
     useCursor(buildMode ? hover : undefined)
+
+    //useEffect without value in the array, only run once when the component is mounted
+    useEffect(() => {
+        clone.traverse((child) => {
+            //go all meshes, add shadow to them
+            if (child.isMesh) {
+                child.castShadow = true
+                child.receiveShadow = true
+            }
+        })
+    }, [])
 
 
     return (
