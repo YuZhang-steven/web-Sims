@@ -60,7 +60,6 @@ export function UI() {
                     onClick={
                         () => {
                             setBuildMode(true)
-                            setShopMode(false)
                         }
                     }
                 >
@@ -86,7 +85,6 @@ export function UI() {
                     className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
                     onClick={
                         () => {
-                            setBuildMode(false)
                             setShopMode(true)
                         }
                     }

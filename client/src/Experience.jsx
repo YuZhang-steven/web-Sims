@@ -233,40 +233,41 @@ export function Experience() {
             {/* <ContactShadows blur={2.5} /> */}
 
             {/*  Floor */}
-            <mesh
-                rotation-x={-Math.PI / 2}
-                position-y={-0.001}
-                //when clicking, send the intersection point information to the server to update the characters.
-                onClick={onPlaneClicked}
+            {!shopMode &&
+                <mesh
+                    rotation-x={-Math.PI / 2}
+                    position-y={-0.001}
+                    //when clicking, send the intersection point information to the server to update the characters.
+                    onClick={onPlaneClicked}
 
-                //mouse hover, the mouse symbol change
-                onPointerEnter={() => setOnFloor(true)}
-                onPointerLeave={() => setOnFloor(false)}
+                    //mouse hover, the mouse symbol change
+                    onPointerEnter={() => setOnFloor(true)}
+                    onPointerLeave={() => setOnFloor(false)}
 
-                onPointerMove={(e) => {
-                    //The function only work in bulidng mode. if it is playing mode, we don't want to move forniture. 
-                    if (!buildMode) {
-                        return
-                    }
-                    //calculate new item postion
-                    const newPosition = vector3ToGrid(e.point)
-                    //check if we have a drag position and both X and Y coordinates are different than original postion
-                    if (!dragPosition ||
-                        dragPosition[0] !== newPosition[0] ||
-                        dragPosition[1] !== newPosition[1]
-                    ) {
-                        //update the DragPosition statae(local), save the new drag position to the state:[x, y]
-                        setDragPosition(newPosition)
-                    }
-                }}
+                    onPointerMove={(e) => {
+                        //The function only work in bulidng mode. if it is playing mode, we don't want to move forniture. 
+                        if (!buildMode) {
+                            return
+                        }
+                        //calculate new item postion
+                        const newPosition = vector3ToGrid(e.point)
+                        //check if we have a drag position and both X and Y coordinates are different than original postion
+                        if (!dragPosition ||
+                            dragPosition[0] !== newPosition[0] ||
+                            dragPosition[1] !== newPosition[1]
+                        ) {
+                            //update the DragPosition statae(local), save the new drag position to the state:[x, y]
+                            setDragPosition(newPosition)
+                        }
+                    }}
 
-                position-x={map.size[0] / 2}
-                position-z={map.size[1] / 2}
-                receiveShadow
-            >
-                <planeGeometry args={map.size} />
-                <meshStandardMaterial color={"#f0f0f0"} />
-            </mesh>
+                    position-x={map.size[0] / 2}
+                    position-z={map.size[1] / 2}
+                    receiveShadow
+                >
+                    <planeGeometry args={map.size} />
+                    <meshStandardMaterial color={"#f0f0f0"} />
+                </mesh>}
 
             {/* visualsed grid  size is 1 unit of three js coordinate*/}
             {/*conditiontal rendering, only show grid in the build mode but not shop mode(when in the shop mode, we are in the build mode at the same time) */}
@@ -278,7 +279,7 @@ export function Experience() {
             {/* loading all items, in the building mode, we use current item list
             when leave the building mode, we retrieve the new list from global state
              */}
-            {(buildMode ? items : map.items).map((item, idx) => (
+            {!shopMode && (buildMode ? items : map.items).map((item, idx) => (
                 <Item
                     key={`${item.name}-${idx}`}
                     item={item}
