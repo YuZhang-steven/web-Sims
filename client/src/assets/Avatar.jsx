@@ -26,11 +26,12 @@ const MOVEMENT_SPEED = 0.032//character move speed
  * @returns 
  * An woman chracters
  */
-export function AnimatedWoman({
+export function Avatar({
   hairColor = "green",
   topColor = "pink",
   bottomColor = "brown",
   id,
+  avatUrl = "https://models.readyplayer.me/65f73e2e542d99479059fb94.glb",
   ...props
 }) {
 
@@ -39,7 +40,13 @@ export function AnimatedWoman({
   // reference point
   const group = useRef()
   //get data from GLTF, notice we export scene not node
-  const { scene, materials, animations } = useGLTF('/models/AnimatedWoman.glb')
+  const { scene } = useGLTF(avatUrl)
+
+  const avatar = useRef()
+
+  //load animation one by one
+  const { animations: walkAnimation } = useGLTF("/animations/M_Walk_001.glb")
+  const { animations: idleAnimation } = useGLTF("/animations/F_Standing_Idle_001.glb")
 
   //clone the skinnedmesh
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene])
@@ -66,9 +73,9 @@ export function AnimatedWoman({
   const { nodes } = useGraph(clone)
 
   //get animation from the GLTf and then add them through reference
-  const { actions } = useAnimations(animations, group)
+  const { actions } = useAnimations([walkAnimation[0], idleAnimation[0]], avatar)
   //switch from different animations
-  const [animation, setAnimation] = useState("CharacterArmature|Idle")
+  const [animation, setAnimation] = useState("F_Standing_Idle_001")
 
 
   /**
@@ -86,6 +93,18 @@ export function AnimatedWoman({
 
   const [user] = useAtom(userAtom)
 
+  /**add  shadow to all mesh*/
+  useEffect(() => {
+    clone.traverse((child) => {
+      //go all meshes, add shadow to them
+      if (child.isMesh) {
+        child.castShadow = true
+        child.receiveShadow = true
+      }
+    })
+  }, [])
+
+
   /**
    * state lisnener during each frame
    */
@@ -100,6 +119,8 @@ export function AnimatedWoman({
      * recalculate the direction and position and gradually move.
      * 
      */
+    const hips = avatar.current.getObjectByName("Hips")
+    hips.position.set(0, hips.position.y, 0)
     if (path?.length && group.current.position.distanceTo(path[0]) > 0.1) {
 
       //direction is the step in each frame. the movement_speed determine the step size
@@ -110,14 +131,14 @@ export function AnimatedWoman({
         .multiplyScalar(MOVEMENT_SPEED)
       group.current.position.sub(direction)//change position to next position
       group.current.lookAt(path[0])// change looking direction
-      setAnimation("CharacterArmature|Run")
+      setAnimation("M_Walk_001")
     }
     else if (path?.length) {
       path.shift()
 
     }
     else {
-      setAnimation("CharacterArmature|Idle")
+      setAnimation("F_Standing_Idle_001")
     }
 
     /**
@@ -140,108 +161,12 @@ export function AnimatedWoman({
       dispose={null}
       name={`character-${id}`}
     >
-      <group name="Root_Scene">
-        <group name="RootNode">
-          <group name="CharacterArmature" rotation={[-Math.PI / 2, 0, 0]} scale={100}>
-            <primitive object={nodes.Root} />
-          </group>
-          <group name="Casual_Body" rotation={[-Math.PI / 2, 0, 0]} scale={100}>
-
-            <skinnedMesh
-              name="Casual_Body_1"
-              geometry={nodes.Casual_Body_1.geometry}
-              material={materials.White}
-              skeleton={nodes.Casual_Body_1.skeleton}
-              castShadow
-            >
-              {/* change material and set the color */}
-              <meshStandardMaterial color={topColor} />
-            </skinnedMesh>
-
-            <skinnedMesh
-              name="Casual_Body_2"
-              geometry={nodes.Casual_Body_2.geometry}
-              material={materials.Skin}
-              skeleton={nodes.Casual_Body_2.skeleton}
-              castShadow
-
-            />
-          </group>
-          <group name="Casual_Feet" rotation={[-Math.PI / 2, 0, 0]} scale={100}>
-            <skinnedMesh
-              castShadow
-              name="Casual_Feet_1"
-              geometry={nodes.Casual_Feet_1.geometry}
-              material={materials.Skin}
-              skeleton={nodes.Casual_Feet_1.skeleton} />
-            <skinnedMesh
-              castShadow
-              name="Casual_Feet_2"
-              geometry={nodes.Casual_Feet_2.geometry}
-              material={materials.Grey}
-              skeleton={nodes.Casual_Feet_2.skeleton} />
-          </group>
-          <group name="Casual_Head" rotation={[-Math.PI / 2, 0, 0]} scale={100}>
-            <skinnedMesh
-              name="Casual_Head_1"
-              geometry={nodes.Casual_Head_1.geometry}
-              material={materials.Skin}
-              skeleton={nodes.Casual_Head_1.skeleton}
-              castShadow
-
-            />
-
-            <skinnedMesh
-              name="Casual_Head_2"
-              geometry={nodes.Casual_Head_2.geometry}
-              material={materials.Hair_Blond}
-              skeleton={nodes.Casual_Head_2.skeleton}
-              castShadow
-
-            >
-              {/* change material and set the color */}
-              <meshStandardMaterial color={hairColor} />
-            </skinnedMesh>
-
-            <skinnedMesh
-              name="Casual_Head_3"
-              geometry={nodes.Casual_Head_3.geometry}
-              material={materials.Hair_Brown}
-              skeleton={nodes.Casual_Head_3.skeleton}
-              castShadow
-
-            />
-
-            <skinnedMesh
-              name="Casual_Head_4"
-              geometry={nodes.Casual_Head_4.geometry}
-              material={materials.Brown}
-              skeleton={nodes.Casual_Head_4.skeleton}
-              castShadow
-
-            />
-
-          </group>
-          <skinnedMesh
-            name="Casual_Legs"
-            geometry={nodes.Casual_Legs.geometry}
-            material={materials.Orange}
-            skeleton={nodes.Casual_Legs.skeleton}
-            rotation={[-Math.PI / 2, 0, 0]}
-            scale={100}
-            castShadow
-
-          >
-            {/* change material and set the color */}
-            <meshStandardMaterial color={bottomColor} />
-          </skinnedMesh>
-
-
-
-        </group>
-      </group>
+      <primitive object={clone} ref={avatar} />
     </group>
   )
 }
 
-useGLTF.preload('/models/AnimatedWoman.glb')
+// useGLTF.preload('/models/AnimatedWoman.glb')
+useGLTF.preload("/animations/M_Walk_001.glb")
+useGLTF.preload("/animations/F_Standing_Idle_001.glb")
+

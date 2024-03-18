@@ -3,9 +3,9 @@ import { useAtom } from "jotai"
 
 
 import { ContactShadows, Environment, Grid, useCursor, OrbitControls } from "@react-three/drei";
-import { AnimatedWoman } from "./assets/AnimatedWoman";
+import { Avatar } from "./assets/Avatar";
 import { charactersAtom, mapAtom, socket, userAtom } from "./components/SocketManager";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Item } from "./components/item";
 import { useThree } from "@react-three/fiber";
 import { useGrid } from "./hook/useGrid";
@@ -38,6 +38,7 @@ export function Experience() {
     //get the map information from the socket message, we don't directly change it in here.
     //all the change need to be call the server to update all the clients
     const [map] = useAtom(mapAtom)
+
     //retrieve current user id
     const [user] = useAtom(userAtom)
 
@@ -363,15 +364,20 @@ export function Experience() {
               */}
             {!buildMode &&
                 characters.map((character) => (
-                    <AnimatedWoman
+                    <Suspense
                         key={character.id}
-                        id={character.id}
-                        path={character.path}
-                        position={gridToVector3(character.position)}
-                        hairColor={character.hairColor}
-                        topColor={character.topColor}
-                        bottomColor={character.bottomColor}
-                    />
+                    >
+                        <Avatar
+                            // key={character.id}
+                            id={character.id}
+                            path={character.path}
+                            position={gridToVector3(character.position)}
+                            hairColor={character.hairColor}
+                            topColor={character.topColor}
+                            bottomColor={character.bottomColor}
+                            avatarUrl={character.avatarUrl}
+                        />
+                    </Suspense>
                 ))
             }
 

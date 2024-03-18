@@ -24,7 +24,7 @@ export const itemsAtom = atom(null)
  * Major socketManager component
  */
 export const SocketManager = () => {
-    //use gloabal state
+
 
     //underscore means, the characters should be a private variables
     const [characters, setCharacters] = useAtom(charactersAtom)
@@ -49,6 +49,7 @@ export const SocketManager = () => {
         }
         //get initial information from server
         function onHello(value) {
+            console.log(value);
 
             //store the information to the global state
             setMap(value.map)// store map and item information 
@@ -90,8 +91,9 @@ export const SocketManager = () => {
 
         //set up the listener to different events
         socket.on("connect", onConnect)
-        socket.on("disconnect", onDisconnect)
         socket.on('hello', onHello)
+        socket.on("disconnect", onDisconnect)
+
         socket.on("characters", onCharacters)
         socket.on('playerMove', onPlayerMove)
         socket.on("mapUpdate", onMapUpdate)

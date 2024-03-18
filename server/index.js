@@ -554,10 +554,12 @@ io.on("connection", (socket) => {
         hairColor: generateRandomHexColor(),
         topColor: generateRandomHexColor(),
         bottomColor: generateRandomHexColor(),
+        avatarUrl: "https://models.readyplayer.me/65f73e2e542d99479059fb94.glb",
     })
 
     //everytime a new socket connected, send this event massage to the one new connected
     //send back message to sender only
+    // console.log(map);
     socket.emit("hello", //the first part is the string for eventName
         {
             map,
@@ -568,6 +570,12 @@ io.on("connection", (socket) => {
 
     //server send the messages to all connacted clients: include the new characters array
     io.emit("characters", characters);
+
+    socket.on("characterAvatarUpdate", (avatarUrl) => {
+        const character = characters.find((character) => character.id === socket.id)
+        character.avatarUrl = avatarUrl
+        io.emit("characters", characters)
+    })
 
 
     //set a event listener: 
