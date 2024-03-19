@@ -31,7 +31,7 @@ export function Avatar({
   topColor = "pink",
   bottomColor = "brown",
   id,
-  avatUrl = "https://models.readyplayer.me/65f73e2e542d99479059fb94.glb",
+  avatarUrl = "https://models.readyplayer.me/65f73e2e542d99479059fb94.glb",
   ...props
 }) {
 
@@ -40,7 +40,8 @@ export function Avatar({
   // reference point
   const group = useRef()
   //get data from GLTF, notice we export scene not node
-  const { scene } = useGLTF(avatUrl)
+  console.log(avatarUrl);
+  const { scene } = useGLTF(avatarUrl)
 
   const avatar = useRef()
 

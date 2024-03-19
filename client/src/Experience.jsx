@@ -376,6 +376,7 @@ export function Experience() {
                             topColor={character.topColor}
                             bottomColor={character.bottomColor}
                             avatarUrl={character.avatarUrl}
+
                         />
                     </Suspense>
                 ))

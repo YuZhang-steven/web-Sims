@@ -30,6 +30,15 @@ export function UI() {
     //avarat edit interface
     const [avatarMode, setAvatarMode] = useState(true)
 
+    /**Avatar page config */
+    const avatarConfig = {
+        clearCache: true,
+        bodyType: 'fullbody',
+        quickStart: true,
+        language: 'en',
+
+    }
+
 
     return (
         <>
@@ -38,6 +47,7 @@ export function UI() {
                     <AvatarCreator
                         subdomain="3d-web-builder"
                         className="fixed top-0 left-0 z-10 w-screen h-screen"
+                        config={avatarConfig}
                         onAvatarExported={(event) => {
                             socket.emit("characterAvatarUpdate", event.data.url)
                             setAvatarMode(false)

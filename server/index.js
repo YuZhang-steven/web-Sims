@@ -572,6 +572,7 @@ io.on("connection", (socket) => {
     io.emit("characters", characters);
 
     socket.on("characterAvatarUpdate", (avatarUrl) => {
+        console.log(avatarUrl);
         const character = characters.find((character) => character.id === socket.id)
         character.avatarUrl = avatarUrl
         io.emit("characters", characters)
