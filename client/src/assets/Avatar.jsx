@@ -8,7 +8,7 @@ import { useGLTF, useAnimations } from '@react-three/drei'
 import { useFrame, useGraph } from '@react-three/fiber'
 import { SkeletonUtils } from "three-stdlib"
 import { useAtom } from 'jotai'
-import { userAtom } from '../components/SocketManager'
+import { socket, userAtom } from '../components/SocketManager'
 import { useGrid } from '../hook/useGrid'
 
 /**
@@ -48,6 +48,7 @@ export function Avatar({
   //load animation one by one
   const { animations: walkAnimation } = useGLTF("/animations/M_Walk_001.glb")
   const { animations: idleAnimation } = useGLTF("/animations/F_Standing_Idle_001.glb")
+  const { animations: danceAnimation } = useGLTF("/animations/M_Dances_001.glb")
 
   //clone the skinnedmesh
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene])
@@ -56,27 +57,17 @@ export function Avatar({
 
   const { gridToVector3 } = useGrid()//grid coordinate convert method
 
-  useEffect(() => {
-    const path = []
 
-    /**
-     * when getting the path from the server, convert the grid position to the vector3 position
-     * change the path state, rerender the component
-     */
-    props.path?.forEach((gridPosition) => {
-      path.push(gridToVector3(gridPosition))
-    });
-    setPath(path)
-
-  }, [props.path])
 
   //from useGraph to get final clone result
   const { nodes } = useGraph(clone)
 
   //get animation from the GLTf and then add them through reference
-  const { actions } = useAnimations([walkAnimation[0], idleAnimation[0]], avatar)
+  const { actions } = useAnimations([walkAnimation[0], idleAnimation[0], danceAnimation[0]], avatar)
   //switch from different animations
   const [animation, setAnimation] = useState("F_Standing_Idle_001")
+
+  const [isDancing, setIsDancing] = useState(false)
 
 
   /**
@@ -104,6 +95,34 @@ export function Avatar({
       }
     })
   }, [])
+
+  /**Dancing and  moving */
+  useEffect(() => {
+    function onPlayerDance(value) {
+      if (value.id === id) {
+        setIsDancing(true)
+      }
+    }
+
+    function onPlayerMove(value) {
+      if (value.id === id) {
+        const path = []
+        value.path?.forEach((gridPosition) => {
+          path.push(gridToVector3(gridPosition))
+        })
+        setPath(path)
+      }
+    }
+
+
+    socket.on("playerMove", onPlayerMove)
+
+    socket.on("playerDance", onPlayerDance)
+    return () => {
+      socket.off("playerDance", onPlayerDance)
+      socket.off("playerMove", onPlayerMove)
+    }
+  }, [id])
 
 
   /**
@@ -133,13 +152,19 @@ export function Avatar({
       group.current.position.sub(direction)//change position to next position
       group.current.lookAt(path[0])// change looking direction
       setAnimation("M_Walk_001")
+      setIsDancing(false)
     }
     else if (path?.length) {
       path.shift()
 
     }
     else {
-      setAnimation("F_Standing_Idle_001")
+      if (isDancing) {
+        setAnimation("M_Dances_001")
+      }
+      else {
+        setAnimation("F_Standing_Idle_001")
+      }
     }
 
     /**
@@ -170,4 +195,5 @@ export function Avatar({
 // useGLTF.preload('/models/AnimatedWoman.glb')
 useGLTF.preload("/animations/M_Walk_001.glb")
 useGLTF.preload("/animations/F_Standing_Idle_001.glb")
+useGLTF.preload("/animations/M_Dances_001.glb")
 

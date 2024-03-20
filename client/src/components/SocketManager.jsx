@@ -68,18 +68,6 @@ export const SocketManager = () => {
         }
 
 
-        //call when player move. return the character need to update
-        function onPlayerMove(value) {
-            setCharacters((prev) => {
-                return prev.map((character) => {
-                    if (character.id === value.id) {
-                        return value
-                    }
-                    return character
-                })
-
-            })
-        }
 
         //up date user/map/characters all information at the same time
         function onMapUpdate(value) {
@@ -95,7 +83,7 @@ export const SocketManager = () => {
         socket.on("disconnect", onDisconnect)
 
         socket.on("characters", onCharacters)
-        socket.on('playerMove', onPlayerMove)
+
         socket.on("mapUpdate", onMapUpdate)
 
 
@@ -105,7 +93,7 @@ export const SocketManager = () => {
             socket.off("disconnect", onDisconnect)
             socket.off('hello', onHello)
             socket.off("characters", onCharacters)
-            socket.off('playerMove', onPlayerMove)
+
             socket.off("mapUpdate", onMapUpdate)
 
         }

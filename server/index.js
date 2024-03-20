@@ -572,9 +572,9 @@ io.on("connection", (socket) => {
     io.emit("characters", characters);
 
     socket.on("characterAvatarUpdate", (avatarUrl) => {
-        console.log(avatarUrl);
+        // console.log(avatarUrl);
         const character = characters.find((character) => character.id === socket.id)
-        character.avatarUrl = avatarUrl
+        character.avatarUrl = avatarUrl.split("?")[0] + "?" + new Date().getTime()
         io.emit("characters", characters)
     })
 
@@ -598,6 +598,13 @@ io.on("connection", (socket) => {
 
         io.emit("playerMove", character)//here emit the specific character, rather than whole list
 
+    })
+
+    /*Dance movent*/
+    socket.on("dance", () => {
+        io.emit("playerDance", {
+            id: socket.id
+        })
     })
 
     /**
